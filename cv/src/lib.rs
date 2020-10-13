@@ -87,9 +87,3 @@ pub mod optimize {
         pub use levenberg_marquardt::*;
     }
 }
-
-/// Visualization utilities
-pub mod vis {
-    #[cfg(feature = "imgshow")]
-    pub use imgshow::imgshow;
-}
