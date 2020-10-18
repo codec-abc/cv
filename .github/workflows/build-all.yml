@@ -27,7 +27,6 @@ jobs:
             ~/.cargo/git
             target
           key: build-${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Run cargo build
         uses: actions-rs/cargo@v1
         with:

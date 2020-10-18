@@ -13,9 +13,6 @@ members = [
     "cv-reconstruction",
     "vslam-sandbox",
     "kpdraw",
-    "imgshow",
-    "tutorial-code/chapter2-first-program",
-    "tutorial-code/chapter3-akaze-feature-extraction",
 ]
 
 [profile.dev]
