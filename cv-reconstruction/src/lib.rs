@@ -7,7 +7,7 @@ pub use settings::*;
 
 use argmin::core::{ArgminKV, ArgminOp, Error, Executor, IterState, Observe, ObserverMode};
 use bitarray::BitArray;
-use cv_core::nalgebra::{DMatrix, Unit, Vector3, Vector6, U1, U6};
+use cv_core::nalgebra::{DMatrix, Point, U1, U3, U6, Unit, Vector3, Vector6};
 use cv_core::{
     sample_consensus::{Consensus, Estimator},
     Bearing, CameraModel, CameraToCamera, FeatureMatch, FeatureWorldMatch, Pose, Projective,
@@ -965,6 +965,29 @@ where
             })
             .collect();
         crate::export::export(std::fs::File::create(path).unwrap(), points_and_colors);
+    }
+
+    pub fn get_reconstruction_point_cloud(&self, reconstruction: ReconstructionKey) -> Vec<(Point<f64, U3>, [u8; 3])> {
+        // Output point cloud.
+        let points_and_colors = self
+            .data
+            .reconstruction(reconstruction)
+            .landmarks
+            .iter()
+            .filter_map(|(landmark, lm_object)| {
+                self.triangulate_landmark_robust(reconstruction, landmark)
+                    .and_then(Projective::point)
+                    .map(|p| {
+                        let (&view, &feature) = lm_object.observations.iter().next().unwrap();
+                        (
+                            p,
+                            self.data.observation_color(reconstruction, view, feature),
+                        )
+                    })
+            })
+            .collect();
+        
+        points_and_colors
     }
 
     /// Runs bundle adjustment (camera pose optimization), landmark filtering, and landmark merging.
